@@ -463,7 +463,8 @@ class Camera(object):
 
         The destructor will automatically close the camera if it has not already been closed."""
         try:
-            _close_camera(self.id)
+            if hasattr(self, 'id'):
+                _close_camera(self.id)
         finally:
             self.closed = True
 
