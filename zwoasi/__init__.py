@@ -271,7 +271,7 @@ def _get_id(id_):
 
 
 def _set_id(id_, new_id):
-    r = zwolib.ASISetID(id_, ord(str(new_id)))
+    r = zwolib.ASISetID(id_, _ASI_ID(bytes(str(new_id), encoding='ascii')))
     if r:
         raise zwo_errors[r]
 
@@ -722,7 +722,7 @@ class _ASI_CAMERA_INFO(c.Structure):
         for k, _ in self._fields_:
             v = getattr(self, k)
             if sys.version_info[0] >= 3 and isinstance(v, bytes):
-                v = v.decode()
+                v = v.decode('ascii', errors='ignore')
             r[k] = v
         del r['Unused']
         
@@ -913,12 +913,12 @@ def init(library_file=None):
     zwolib.ASIGetID.restype = c.c_int
 
     # Include file suggests:
-    # zwolib.ASISetID.argtypes = [c.c_int, _ASI_ID]
+    zwolib.ASISetID.argtypes = [c.c_int, _ASI_ID]
     #
     # Suspect it should really be
     # zwolib.ASISetID.argtypes = [c.c_int, c.POINTER(_ASI_ID)]
     #
-    # zwolib.ASISetID.restype = c.c_int
+    zwolib.ASISetID.restype = c.c_int
     #
     # Leave out support for ASISetID for now
 
